@@ -8,4 +8,5 @@ dependencies = [
     "gpiozero>=2.0.1",
     "jupyterlab>=4.3.4",
     "matplotlib>=3.10.0",
+    "pandas>=2.2.3",
 ]
