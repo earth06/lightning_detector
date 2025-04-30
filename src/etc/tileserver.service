@@ -1,0 +1,11 @@
+[Unit]
+Description=run weather forecaster workbook searching system
+
+[Service]
+ExecStart=/home/takato/Git/weather_forecaster_workbook/run_server.sh
+ExecStop=/bin/kill ${MAINPID}
+Restart=on-success
+
+[Install]
+WantedBy=default.target
+
