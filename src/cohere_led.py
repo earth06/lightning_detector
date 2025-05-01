@@ -1,70 +1,67 @@
 import subprocess
-import pigpio
+import sys
 from time import sleep, time
 
-LIGHT_BUTTON_PIN = 5
+from gpiozero import LED, MCP3208, Button
+from gpiozero.pins.pigpio import PiGPIOFactory
+
+from src.base import BaseClass
+
 SHUTDOWN_BUTTON_PIN = 6
 COHERE_PIN = 16
 GATE_PIN = 20
+Vref = 3.3
 
 
-class CohereLED:
+class CohereLED(BaseClass):
     def __init__(self):
-        self.LIGHT_BUTTON_PIN = LIGHT_BUTTON_PIN
-        self.SHUTDOWN_BUTTON_PIN = SHUTDOWN_BUTTON_PIN
-        self.GATE_PIN = GATE_PIN
-        self.COHERE_PIN = COHERE_PIN
-        self.pi = pigpio.pi()
-        # blue button
-        # self.pi.set_mode(self.LIGHT_BUTTON_PIN, pigpio.INPUT)
-        # self.pi.set_pull_up_down(self.LIGHT_BUTTON_PIN, pigpio.PUD_OFF)
-        # red button
-        self.pi.set_mode(self.SHUTDOWN_BUTTON_PIN, pigpio.INPUT)
-        self.pi.set_pull_up_down(self.SHUTDOWN_BUTTON_PIN, pigpio.PUD_OFF)
+        super().__init__()
+        factory = PiGPIOFactory()
+        self.adc_ch0 = MCP3208(channel=0, max_voltage=Vref, pin_factory=factory)
+        self.shutdown_button = Button(SHUTDOWN_BUTTON_PIN, pull_up=False, bounce_time=0.05)
+        self.cohere_sensor = Button(COHERE_PIN, pull_up=False, bounce_time=0.05)
+        self.thres_cohere_voltage = 2.5
+        self.gate = LED(GATE_PIN)
+        self.last_shutdown_time = 0
+        self.debounce_interval = 2
 
-        # cohere
-        self.pi.set_mode(self.COHERE_PIN, pigpio.INPUT)
-        self.pi.set_pull_up_down(self.COHERE_PIN,pigpio.PUD_DOWN)
+        self.shutdown_button.when_pressed = self.shutdown
 
-        # トランジスタのベース接続        
-        self.pi.set_mode(self.GATE_PIN, pigpio.OUTPUT)
-        self.last_light_button_pushtime = time()
+    def shutdown(self):
+        now = time()
+        if now - self.last_shutdown_time < self.debounce_interval:
+            return
+        self.last_shutdown_time = now
 
-    def shutdown(self, gpio, level, tick):
         sleep(2)
-        state = self.pi.read(self.SHUTDOWN_BUTTON_PIN)
-        if state ==1:
-            res = subprocess.call("sudo /usr/sbin/shutdown +1", shell=True)
-            exit()
-        else:
-            pass
+        if self.shutdown_button.is_pressed:
+            subprocess.call("sudo /usr/sbin/shutdown +1", shell=True)
+            sys.exit()
 
-    def lls_on_off(self, gpio, level, tick):
-        time_now = time()
-        diff = time_now - self.last_light_button_pushtime
-        self.last_light_button_pushtime = time_now
-        if diff <= 1:
-            return False
-        # GPIOの状態を読み取る
-        # gate_state = self.pi.read(self.GATE_PIN)
-        # if gate_state == 1:
-        #     self.pi.write(self.GATE_PIN, pigpio.LOW)
-        # elif gate_state == 0:
-        
-        # 点灯は10秒だけにする
-        self.pi.write(self.GATE_PIN, pigpio.HIGH)
+    def lls_on_off(self):
+        self.gate.on()
         sleep(10)
-        self.pi.write(self.GATE_PIN, pigpio.LOW)
-        return True
+        self.gate.off()
 
     def run(self):
-        self.pi.callback(self.SHUTDOWN_BUTTON_PIN, pigpio.RISING_EDGE, self.shutdown)
-        self.pi.callback(self.COHERE_PIN, pigpio.RISING_EDGE, self.lls_on_off)
+        is_triggered = False
         try:
             while True:
-                sleep(1)
+                cohere_pin_voltage = self.adc_ch0.value * Vref
+                if cohere_pin_voltage >= self.thres_cohere_voltage:
+                    if is_triggered:
+                        self.logger.info("前回の検波から電位が変化していません。")
+                        # すでに前回起動してからコヒーラがリセットされて以内ならLED点灯は市内
+                        continue
+                    self.logger.info("電磁波を検波しました。")
+                    self.lls_on_off()
+                    is_triggered = True
+                else:
+                    is_triggered = False
+                sleep(0.1)
+
         except KeyboardInterrupt:
-            self.pi.stop()
+            pass
 
 
 if __name__ == "__main__":
