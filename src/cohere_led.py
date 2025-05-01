@@ -5,7 +5,7 @@ from time import sleep, time
 from gpiozero import LED, MCP3208, Button
 from gpiozero.pins.pigpio import PiGPIOFactory
 
-from src.base import BaseClass
+from base import BaseClass
 
 SHUTDOWN_BUTTON_PIN = 6
 COHERE_PIN = 16
@@ -61,7 +61,8 @@ class CohereLED(BaseClass):
                 sleep(0.1)
 
         except KeyboardInterrupt:
-            pass
+            self.gate.off()
+            self.gate.close()
 
 
 if __name__ == "__main__":
