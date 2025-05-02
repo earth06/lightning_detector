@@ -28,7 +28,7 @@ line-length = 120
 target-version = "py311"
 
 [lint]
-ignore = ["D", "ANN", "ERA001", "T201", "FBT003", "G004", "PLR0913", "RUF100", "E741", "PTH123", "PD901"]
+ignore = ["D", "ANN", "ERA001", "T201", "FBT003", "G004", "PLR0913", "RUF100", "E741", "PTH123", "PD901", "COM812"]
 select = ["ALL"]
 
 # print (T201): printがあると警告を出す
