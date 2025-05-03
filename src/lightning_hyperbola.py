@@ -120,7 +120,7 @@ class LightningHyperbola(BaseClass):
         return (z1_shift, z2_shift, z3_shift, z4_shift)
 
     def load_station(self):
-        self.station_master = pd.read_csv("../src/lightning_obs_station.csv")
+        self.station_master = pd.read_csv("./master/lightning_obs_station.csv")
 
     def get_hyperbola(self):
         # 雷地点をダミーで生成
@@ -146,7 +146,9 @@ class LightningHyperbola(BaseClass):
             k, l, np.abs(df_st.iloc[0]["arrive_time"] - df_st.iloc[1]["arrive_time"])
         )
 
-        result = {"lightning_point": (lt_lon, lt_lat), "use_station": df_st, "hyperbola": [z_lm, z_mn, z_kl]}
+        result = {"lightning_point":(lt_lon, lt_lat), 
+                  "use_station": df_st,
+                  "hyperbola": [z_lm, z_mn, z_kl]}
         return result
 
 

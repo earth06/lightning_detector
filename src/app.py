@@ -13,15 +13,18 @@ app.layout = dbc.Container(
     [
         dbc.Row(
             dbc.Col(
-                html.H1("電力需給・電力市場DashBoard"),
+                html.H1("雷鳴神"),
                 width=12,
-                style={"background-color": "palegreen", "color": "white"},
+                style={"background-color": "slateblue", "color": "white"},
             )
         ),
         dbc.Row(
             [dbc.Col(dash.page_container, width=12)],
-            style={"height": "90vh"},
+            style={"height": "95vh"},
         ),
     ],
     fluid=True,
 )
+
+if __name__ == "__main__":
+    app.run(host="localhost", port=18889, debug=True)
