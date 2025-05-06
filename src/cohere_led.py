@@ -3,7 +3,6 @@ import sys
 from time import sleep, time
 
 from gpiozero import LED, MCP3208, Button, Device
-from gpiozero.pins.native import NativeFactory
 from gpiozero.pins.pigpio import PiGPIOFactory
 
 from base import BaseClass
@@ -12,13 +11,12 @@ SHUTDOWN_BUTTON_PIN = 6
 COHERE_PIN = 16
 GATE_PIN = 20
 Vref = 3.3
-Device.pin_factory = NativeFactory()
+Device.pin_factory = PiGPIOFactory()
 
 class CohereLED(BaseClass):
     def __init__(self):
         super().__init__()
-        factory = PiGPIOFactory()
-        self.adc_ch0 = MCP3208(channel=0, max_voltage=Vref, pin_factory=factory)
+        self.adc_ch0 = MCP3208(channel=0, max_voltage=Vref)
         self.shutdown_button = Button(SHUTDOWN_BUTTON_PIN, pull_up=False, bounce_time=0.05)
         self.cohere_sensor = Button(COHERE_PIN, pull_up=False, bounce_time=0.05)
         self.thres_cohere_voltage = 2.5
