@@ -6,4 +6,5 @@ my_app = create_app(
 )
 
 if __name__ == "__main__":
-    my_app.run(debug=True, port=18888)
+    #my_app.run(debug=True, port=18888)
+    my_app.run(host="100.66.1.13",debug=True, port=18888)

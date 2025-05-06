@@ -5,4 +5,4 @@ UV=$HOME/.local/bin/uv
 
 cd $SCRIPT_DIR/../../
 
-$UV run -m src.measure_lightning > /dev/null 2>&1 & 
+$UV run -m src.measure_lightning > /dev/null 2>&1 

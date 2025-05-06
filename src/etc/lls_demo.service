@@ -5,7 +5,7 @@ Description=run weather forecaster workbook searching system
 Environment=HOME=/home/takato/
 Environment=ROOTDIR=${HOME}/Git/lightning_detector
 
-ExecStart=${ROOTDIR}/src/etc/run_lls_demo.sh
+ExecStart=/home/takato/Git/lightning_detector/src/etc/run_lls_demo.sh
 ExecStop=/bin/kill ${MAINPID}
 Restart=on-success
 

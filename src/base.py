@@ -8,7 +8,7 @@ class BaseClass:
         with open("./log/log_config.json") as f:
             log_conf = json.load(f)
             config.dictConfig(log_conf)
-            self.logger = getLogger(__name__)
+            self.logger = getLogger("mylogger")
 
 
 if __name__=="__main__":

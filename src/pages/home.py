@@ -81,12 +81,14 @@ def update_demand_graph():
             "below": "traces",
             "sourcetype": "raster",
             "source": [
-                "http://localhost:18888/{z}/{x}/{y}.png"
+                "http://100.66.1.13:18888/{z}/{x}/{y}.png"
             ]
         }
       ],
       map_zoom=6, map_center_lat = 35, map_center_lon=138,
-        margin={"r":0,"t":0,"l":0,"b":0})
+        margin={"r":0,"t":0,"l":0,"b":0},
+        height=800
+        )
     return fig
 
 

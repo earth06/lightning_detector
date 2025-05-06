@@ -2,7 +2,8 @@ import subprocess
 import sys
 from time import sleep, time
 
-from gpiozero import LED, MCP3208, Button
+from gpiozero import LED, MCP3208, Button, Device
+from gpiozero.pins.native import NativeFactory
 from gpiozero.pins.pigpio import PiGPIOFactory
 
 from base import BaseClass
@@ -11,7 +12,7 @@ SHUTDOWN_BUTTON_PIN = 6
 COHERE_PIN = 16
 GATE_PIN = 20
 Vref = 3.3
-
+Device.pin_factory = NativeFactory()
 
 class CohereLED(BaseClass):
     def __init__(self):
@@ -35,6 +36,7 @@ class CohereLED(BaseClass):
 
         sleep(2)
         if self.shutdown_button.is_pressed:
+            self.logger.info("shutdown")
             subprocess.call("sudo /usr/sbin/shutdown +1", shell=True)
             sys.exit()
 
@@ -44,6 +46,8 @@ class CohereLED(BaseClass):
         self.gate.off()
 
     def run(self):
+        print("start")
+        self.logger.info("検波を開始します")
         is_triggered = False
         try:
             while True:
