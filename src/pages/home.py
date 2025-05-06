@@ -71,7 +71,7 @@ def update_demand_graph():
     fig.update_layout(
         map_style="white-bg",
         map_layers=[
-            {"below": "traces", "sourcetype": "raster", "source": ["http://" + HOST + PORT + "/{z}/{x}/{y}.png"]}
+            {"below": "traces", "sourcetype": "raster", "source": ["http://" + f"{HOST}:{PORT}" + "/{z}/{x}/{y}.png"]}
         ],
         map_zoom=6,
         map_center_lat=35,
