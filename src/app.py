@@ -27,5 +27,9 @@ app.layout = dbc.Container(
 )
 
 if __name__ == "__main__":
-    #app.run(host="localhost", port=18889, debug=True)
-    app.run(host="100.66.1.13", port=18889, debug=True)
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--host", default="localhost", help="server's IP, ex) 100.66.1.13")
+    parser.add_argument("--port", default=18889)
+    args = parser.parse_args()
+    # app.run(host="localhost", port=18889, debug=True)
+    app.run(host=args.host, port=args.port, debug=True)
